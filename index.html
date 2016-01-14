@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="meetUpPlanner">
+<head>
+	<meta charset="UTF-8">
+	<title>Meet Up Planner</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/main.css">
+</head>
+<body ng-controller="meetUpCtrl">
+<header>
+	<nav></nav>
+</header>
+<div class="container">
+	<div class="row">
+		<div class="col-xs-12">
+			<h1>Meet Up Form</h1>
+			<form action="" ng-controller="formCtrl">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-sm-6">
+							<label for="name">Name</label>
+							<input type="text" id="name" name="name" class="form-control" autofocus autocomplete="name"/>
+						</div>
+						<div class="col-sm-6">
+							<label for="email">Email</label>
+							<input type="email" id="email" name="email"  class="form-control">
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="password">Password</label>
+					<input type="password" id="password" name="password"  class="form-control">
+				</div>
+				<div class="form-group">
+					<p class="help-block">Biographical information (such as employer, job title, birthday, etc)</p>
+					<textarea name="bio" id="" cols="30" rows="10" class="form-control"></textarea>
+				</div>
+				<hr>
+				<div class="form-group">
+					<label for="eventName">Name of Event</label>
+					<input type="text" class="form-control" name="eventName" id="eventName">
+				</div>
+				<div class="form-group">
+					<label for="eventType">Type of Event</label>
+					<input type="text" class="form-control" name="eventType" id="eventType">
+				</div>
+				<div class="form-group">
+					<div class="row">
+						<div class="col-xs-6">
+							<label for="eventStart">Event Start Date/Time</label>
+							<input type="datetime-local" class="form-control" name="eventStart" id="eventStart">
+						</div>
+						<div class="col-xs-6">
+							<label for="eventEnd">Event End Date/Time</label>
+							<input type="datetime-local" class="form-control" name="eventEnd" id="eventEnd">
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="guest">Guest List</label>
+					<input type="text" name="guest" id="guest" class="form-control">
+				</div>
+				<div class="form-group">
+					<button class="btn btn-primary" id="addGuest">Add Guest</button>
+				</div>
+				<div class="form-group">
+					<label for="location">Location</label>
+					<input type="text" class="form-control" name="location" id="location">
+				</div>
+				<div class="form-group">
+					<p>Additional Information about event</p>
+				</div>
+				<div class="form-group">
+					<button type="submit" class="btn btn-success">Add Event</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-6">
+
+		</div>
+		<div class="col-sm-6">
+
+		</div>
+	</div>
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
