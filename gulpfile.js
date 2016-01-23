@@ -4,6 +4,7 @@ var gulp = require('gulp'),
 	uglify = require('gulp-uglify'),
 	notify = require('gulp-notify'),
 	livereload = require('gulp-livereload'),
+	rename = require('gulp-rename'),
 	sass = require('gulp-sass');
 
 var PATH = 'public_html/';
@@ -18,6 +19,7 @@ gulp.task('sass', function(){
 			browsers: ['last 2 versions'],
 			cascade: false
 		}))
+		.pipe(rename({suffix:'.min'}))
 		.pipe(gulp.dest(PATH+'css/'))
 		.pipe(livereload());
 });
