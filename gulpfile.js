@@ -34,6 +34,6 @@ gulp.task('sass', function(){
 
 gulp.task('default', ['sass'], function(){
 	livereload.listen();
-	gulp.watch('assets/sass/main.scss', ['sass']);
+	gulp.watch('sass/main.scss', ['sass']);
 	// gulp.watch('assets/js/*.js', ['js']);
 });

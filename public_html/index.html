@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Meet Up Planner</title>
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/css/main.min.css">
 </head>
@@ -11,74 +12,113 @@
 	<div class="row">
 		<div class="col-xs-12">
 			<h1>Meet Up Form</h1>
+
 			<form action="" ng-controller="formCtrl">
-				<div class="form-group">
-					<div class="row">
-						<div class="col-sm-6">
-							<label for="name">Name</label>
+				<h3>Personal Information</h3>
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label class="control-label" for="name">Name</label>
 							<input type="text" id="name" name="name" class="form-control" autofocus autocomplete="name"/>
 						</div>
-						<div class="col-sm-6">
-							<label for="email">Email</label>
+						<div class="form-group">
+							<label class="control-label" for="email">Email</label>
 							<input type="email" id="email" name="email"  class="form-control">
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="password">Password</label>
+							<input type="password" id="password" name="password"  class="form-control">
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label class="control-label" for="bio">Biographical information</label>
+							<textarea name="bio" id="bio" class="form-control" rows="2"></textarea>
+							<span class="help-block">(such as employer, job title, birthday, etc)</span>
 						</div>
 					</div>
 				</div>
-				<div class="form-group">
-					<label for="password">Password</label>
-					<input type="password" id="password" name="password"  class="form-control">
-				</div>
-				<div class="form-group">
-					<p class="help-block">Biographical information (such as employer, job title, birthday, etc)</p>
-					<textarea name="bio" id="" cols="30" rows="10" class="form-control"></textarea>
-				</div>
 				<hr>
-				<div class="form-group">
-					<label for="eventName">Name of Event</label>
-					<input type="text" class="form-control" name="eventName" id="eventName">
+				<h3>Event Information</h3>
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label class="control-label" for="eventName">Name of Event</label>
+							<input type="text" class="form-control" name="eventName" id="eventName">
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label class="control-label" for="eventType">Type of Event</label>
+							<input type="text" class="form-control" name="eventType" id="eventType">
+						</div>
+					</div>
 				</div>
-				<div class="form-group">
-					<label for="eventType">Type of Event</label>
-					<input type="text" class="form-control" name="eventType" id="eventType">
-				</div>
-				<div class="form-group">
-					<div class="row">
-						<div class="col-xs-6">
-							<label for="eventStart">Event Start Date/Time</label>
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label" for="eventStart">Event Start Date/Time</label>
 							<input type="datetime-local" class="form-control" name="eventStart" id="eventStart">
 						</div>
-						<div class="col-xs-6">
-							<label for="eventEnd">Event End Date/Time</label>
+					</div>
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label" for="eventEnd">Event End Date/Time</label>
 							<input type="datetime-local" class="form-control" name="eventEnd" id="eventEnd">
 						</div>
 					</div>
 				</div>
-				<div class="form-group">
-					<label for="guest">Guest List</label>
-					<input type="text" name="guest" id="guest" class="form-control">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label class="control-label" for="guest">Guests</label>
+							<input type="text" name="guest" id="guest" class="form-control" ng-model="guest">
+						</div>
+						<div class="form-group">
+							<button class="btn btn-primary" id="addGuest" ng-click="addGuest()" type="button">Add Guest</button>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<h4>Current guest list</h4>
+						<p ng-if="guestList.length === 0">No guests added yet!</p>
+						<ul class="list-unstyled guest-list">
+							<li ng-repeat="guest in guestList track by $index">{{guest}}</li>
+						</ul>
+					</div>
 				</div>
-				<div class="form-group">
-					<button class="btn btn-primary" id="addGuest">Add Guest</button>
+				<hr>
+				<h3>Location Information</h3>
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label" for="address">Address</label>
+							<input type="text" class="form-control" name="address" id="address">
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="zip">Postal Code</label>
+							<input type="text" class="form-control" id="zip" ng-model="zip">
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="country">Country</label>
+							<input type="text" class="form-control" id="country" ng-model="country">
+						</div>
+					</div>
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label" for="additionalInfo">Additional Information about event</label>
+							<textarea name="additionalInfo" id="additionalInfo" class="form-control" rows="2"></textarea>
+						</div>
+					</div>
 				</div>
+
 				<div class="form-group">
-					<label for="location">Location</label>
-					<input type="text" class="form-control" name="location" id="location">
-				</div>
-				<div class="form-group">
-					<p>Additional Information about event</p>
-				</div>
-				<div class="form-group">
-					<button type="submit" class="btn btn-success">Add Event</button>
+					<button type="submit" class="btn btn-success" ng-click="addEvent()">Add Event</button>
 				</div>
 			</form>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-sm-6">
-
-		</div>
-		<div class="col-sm-6">
-
+	<div class="row" ng-repeat="event in events">
+		<div class="col-sm-12">
 		</div>
 	</div>
 </div>
