@@ -1,6 +1,28 @@
-var app = angular.module('meetUpPlanner', []);
+var app = angular.module('app', ['ngRoute']);
 
-app.controller('formCtrl', ["$scope",function($scope){
+app.config(function($routeProvider, $locationProvider){
+	$routeProvider
+		.when('/', {
+			templateUrl: '/pages/event.html',
+			controller: eventCtrl,
+		}).when('/sign-up', {
+			templateUrl: '/pages/sign-up.html',
+			controller: signUpCtrl,
+		}).when('/login', {
+			templateUrl:'/pages/login.html',
+			controller: loginCtrl,
+		}).otherwise({
+			redirectTo: '/'
+		});
+
+	$locationProvider.html5Mode(true);
+
+});
+
+function loginCtrl($scope){
+	console.log('Login');
+};
+function eventCtrl($scope){
 	$scope.guestList = new Array();
 	$scope.events = [];
 	var newEvent = new Object();
@@ -18,15 +40,16 @@ app.controller('formCtrl', ["$scope",function($scope){
 		console.log(value);
 	}
 
-	if(navigator.geolocation){
-		navigator.geolocation.getCurrentPosition(function(position){
-			if(position.address){
-				$scope.zip = position.address.postalCode;
-				$scope.country = position.address.country;
-			}
-		});
-	}
+	// if(navigator.geolocation){
+	// 	navigator.geolocation.getCurrentPosition(function(position){
+	// 		if(position.address){
+	// 			$scope.zip = position.address.postalCode;
+	// 			$scope.country = position.address.country;
+	// 		}
+	// 	});
+	// }
 
-}]);
-
-
+};
+function signUpCtrl($scope){
+	console.log('sign Up');
+};
