@@ -1,4 +1,5 @@
-var app = angular.module('app', ['ngRoute']);
+var ref = new Firebase("https://glowing-fire-6341.firebaseio.com");
+var app = angular.module('app', ['ngRoute','ngCookies', 'firebase']);
 
 app.config(function($routeProvider, $locationProvider){
 	$routeProvider
@@ -19,10 +20,58 @@ app.config(function($routeProvider, $locationProvider){
 
 });
 
-function loginCtrl($scope){
-	console.log('Login');
+function loginCtrl($scope, $firebaseAuth, $location, $cookies){
+	auth = $firebaseAuth(ref);
+	$scope.formData = {
+		email: "",
+		password: "",
+	}
+	$scope.login = function(formData){
+		$scope.authData = null;
+		$scope.error = null;
+		auth.$createUser(formData).then(function(authData){
+			$cookies.put(userId, authData.uid);
+			$location.path("/");
+		}).catch(function(error){
+			console.log(error);
+			$scope.error = error;
+		});
+	}
 };
-function eventCtrl($scope){
+function signUpCtrl($scope, $http, $firebaseObject, $location){
+	$scope.formData = {};
+
+	$scope.processForm = function(){
+		ref.createUser({
+			email: $scope.formData.email,
+			password: $scope.formData.password,
+		}, function(error, userData){
+			if(error){
+				$scope.error(error);
+			} else {
+				var userRef = ref.child("users");
+				userRef.child(userData.uid).set({
+					name: $scope.formData.name,
+					bio: $scope.formData.bio,
+				}, function(){
+					ref.authWithPassword({
+						"email": $scope.formData.email,
+						"password": $scope.formData.password,
+					}, function(error, authData){
+						if(error){
+							console.log("Error authenticating User");
+						} else {
+							$location.path("/");
+						}
+					});
+				});
+			}
+		});
+	}
+};
+function eventCtrl($scope, $firebaseObject){
+
+	$scope.data = $firebaseObject(ref)
 	$scope.guestList = new Array();
 	$scope.events = [];
 	var newEvent = new Object();
@@ -50,6 +99,4 @@ function eventCtrl($scope){
 	// }
 
 };
-function signUpCtrl($scope){
-	console.log('sign Up');
-};
+
