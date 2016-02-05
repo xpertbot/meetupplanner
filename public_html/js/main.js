@@ -1,7 +1,7 @@
 var ref = new Firebase("https://glowing-fire-6341.firebaseio.com");
-var app = angular.module('app', ['ngRoute','ngCookies', 'firebase']);
 
-app.config(function($routeProvider, $locationProvider){
+var app = angular.module('app', ['ngRoute','ngCookies', 'firebase'])
+.config(function($routeProvider, $locationProvider){
 	$routeProvider
 		.when('/', {
 			templateUrl: '/pages/event.html',
@@ -18,27 +18,54 @@ app.config(function($routeProvider, $locationProvider){
 
 	$locationProvider.html5Mode(true);
 
+}).run(function($rootScope, $location, $cookies){
+	var user = $cookies.get("user");
+	$rootScope.loggedInUser = user;
+	$rootScope.$on("$routeChangeStart", function(event, next, current){
+		if(! $rootScope.loggedInUser){
+			var publicPages = [
+				"/pages/login.html",
+				"/pages/sign-up.html",
+			];
+			if(publicPages.indexOf(next.templateUrl) !== -1){
+
+			} else {
+				$location.path('/login');
+			}
+		}
+	});
 });
 
-function loginCtrl($scope, $firebaseAuth, $location, $cookies){
+function loginCtrl($scope, $firebaseAuth, $location, $cookies, $rootScope){
+	if($rootScope.loggedInUser){
+		$location.path("/");
+	}
 	auth = $firebaseAuth(ref);
+
+	$scope.remember = false;
 	$scope.formData = {
 		email: "",
 		password: "",
 	}
+
 	$scope.login = function(formData){
 		$scope.authData = null;
 		$scope.error = null;
-		auth.$createUser(formData).then(function(authData){
-			$cookies.put(userId, authData.uid);
+		auth.$authWithPassword(formData).then(function(authData){
+			if($scope.remember){
+				$cookies.put("user", authData.uid);
+			}
+			$rootScope.loggedInUser = authData.uid;
 			$location.path("/");
 		}).catch(function(error){
-			console.log(error);
 			$scope.error = error;
 		});
 	}
 };
 function signUpCtrl($scope, $http, $firebaseObject, $location){
+	if($rootScope.loggedInUser){
+		$location.path("/");
+	}
 	$scope.formData = {};
 
 	$scope.processForm = function(){
@@ -71,7 +98,8 @@ function signUpCtrl($scope, $http, $firebaseObject, $location){
 };
 function eventCtrl($scope, $firebaseObject){
 
-	$scope.data = $firebaseObject(ref)
+	$scope.data = $firebaseObject(ref);
+	console.log($scope.data);
 	$scope.guestList = new Array();
 	$scope.events = [];
 	var newEvent = new Object();
