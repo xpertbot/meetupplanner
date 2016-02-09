@@ -1,17 +1,21 @@
+(function() {
 var ref = new Firebase("https://glowing-fire-6341.firebaseio.com");
 
 var app = angular.module('app', ['ngRoute','ngCookies', 'firebase'])
 .config(function($routeProvider, $locationProvider){
 	$routeProvider
 		.when('/', {
-			templateUrl: '/pages/event.html',
-			controller: eventCtrl,
+			templateUrl: '/pages/dashboard.html',
+			controller: dashboardCtrl,
 		}).when('/sign-up', {
 			templateUrl: '/pages/sign-up.html',
 			controller: signUpCtrl,
 		}).when('/login', {
 			templateUrl:'/pages/login.html',
 			controller: loginCtrl,
+		}).when('/new', {
+			templateUrl:'/pages/event.html',
+			controller: eventCtrl,
 		}).otherwise({
 			redirectTo: '/'
 		});
@@ -27,75 +31,16 @@ var app = angular.module('app', ['ngRoute','ngCookies', 'firebase'])
 				"/pages/login.html",
 				"/pages/sign-up.html",
 			];
-			if(publicPages.indexOf(next.templateUrl) !== -1){
-
-			} else {
+			if(publicPages.indexOf(next.templateUrl) == -1){
 				$location.path('/login');
 			}
 		}
 	});
 });
+function dashboardCtrl($scope, $firebaseObject){
 
-function loginCtrl($scope, $firebaseAuth, $location, $cookies, $rootScope){
-	if($rootScope.loggedInUser){
-		$location.path("/");
-	}
-	auth = $firebaseAuth(ref);
-
-	$scope.remember = false;
-	$scope.formData = {
-		email: "",
-		password: "",
-	}
-
-	$scope.login = function(formData){
-		$scope.authData = null;
-		$scope.error = null;
-		auth.$authWithPassword(formData).then(function(authData){
-			if($scope.remember){
-				$cookies.put("user", authData.uid);
-			}
-			$rootScope.loggedInUser = authData.uid;
-			$location.path("/");
-		}).catch(function(error){
-			$scope.error = error;
-		});
-	}
 };
-function signUpCtrl($scope, $http, $firebaseObject, $location){
-	if($rootScope.loggedInUser){
-		$location.path("/");
-	}
-	$scope.formData = {};
 
-	$scope.processForm = function(){
-		ref.createUser({
-			email: $scope.formData.email,
-			password: $scope.formData.password,
-		}, function(error, userData){
-			if(error){
-				$scope.error(error);
-			} else {
-				var userRef = ref.child("users");
-				userRef.child(userData.uid).set({
-					name: $scope.formData.name,
-					bio: $scope.formData.bio,
-				}, function(){
-					ref.authWithPassword({
-						"email": $scope.formData.email,
-						"password": $scope.formData.password,
-					}, function(error, authData){
-						if(error){
-							console.log("Error authenticating User");
-						} else {
-							$location.path("/");
-						}
-					});
-				});
-			}
-		});
-	}
-};
 function eventCtrl($scope, $firebaseObject){
 
 	$scope.data = $firebaseObject(ref);
@@ -128,3 +73,69 @@ function eventCtrl($scope, $firebaseObject){
 
 };
 
+function loginCtrl($scope, $firebaseAuth, $location, $cookies, $rootScope){
+	if($rootScope.loggedInUser){
+		$location.path("/");
+	}
+	auth = $firebaseAuth(ref);
+
+	$scope.remember = false;
+	$scope.formData = {
+		email: "",
+		password: "",
+	}
+
+	$scope.login = function(formData){
+		$scope.authData = null;
+		$scope.errors = [];
+		auth.$authWithPassword(formData).then(function(authData){
+			if($scope.remember){
+				$cookies.put("user", authData.uid);
+			}
+			$rootScope.loggedInUser = authData.uid;
+			$location.path("/");
+		}).catch(function(error){
+			console.log(error);
+			$scope.errors.push(error);
+		});
+	}
+};
+
+function signUpCtrl($scope, $http, $firebaseObject, $location, $rootScope){
+	if($rootScope.loggedInUser){
+		$location.path("/");
+	}
+	$scope.formData = {};
+
+	$scope.processForm = function(){
+		$scope.errors = [];
+		ref.createUser({
+			email: $scope.formData.email,
+			password: $scope.formData.password,
+		}, function(error, userData){
+			if(error){
+				console.log(error);
+				$scope.errors.push(error);
+			} else {
+				var userRef = ref.child("users");
+				userRef.child(userData.uid).set({
+					name: $scope.formData.name,
+					bio: $scope.formData.bio,
+				}, function(){
+					ref.authWithPassword({
+						"email": $scope.formData.email,
+						"password": $scope.formData.password,
+					}, function(error, authData){
+						if(error){
+							console.log(error);
+							$scope.errors.push(error);
+						} else {
+							$location.path("/");
+						}
+					});
+				});
+			}
+		});
+	}
+};
+})();
