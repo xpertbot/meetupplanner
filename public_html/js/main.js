@@ -5,17 +5,14 @@ var app = angular.module('app', ['ngRoute','ngCookies', 'firebase'])
 .config(function($routeProvider, $locationProvider){
 	$routeProvider
 		.when('/', {
-			templateUrl: '/pages/dashboard.html',
-			controller: dashboardCtrl,
+			templateUrl:'/pages/event.html',
+			controller: eventCtrl,
 		}).when('/sign-up', {
 			templateUrl: '/pages/sign-up.html',
 			controller: signUpCtrl,
 		}).when('/login', {
 			templateUrl:'/pages/login.html',
 			controller: loginCtrl,
-		}).when('/new', {
-			templateUrl:'/pages/event.html',
-			controller: eventCtrl,
 		}).otherwise({
 			redirectTo: '/'
 		});
@@ -37,39 +34,34 @@ var app = angular.module('app', ['ngRoute','ngCookies', 'firebase'])
 		}
 	});
 });
-function dashboardCtrl($scope, $firebaseObject){
 
-};
+function eventCtrl($scope, $rootScope, $firebaseArray){
+	$scope.currentEvents = $firebaseArray(ref.child("events"));
 
-function eventCtrl($scope, $firebaseObject){
-
-	$scope.data = $firebaseObject(ref);
-	console.log($scope.data);
-	$scope.guestList = new Array();
-	$scope.events = [];
-	var newEvent = new Object();
+	$scope.newEvent = {
+		guestList: []
+	};
 
 	$scope.addEvent = function(){
-		$scope.events.push(newEvent);
+		$scope.newEvent.user = $rootScope.loggedInUser;
+		ref.child("events").push().set({
+			name: $scope.newEvent.name,
+			type: $scope.newEvent.type,
+			startDate: $scope.newEvent.startDate.getTime(),
+			endDate: $scope.newEvent.endDate.getTime(),
+			guestList: $scope.newEvent.guestList,
+			address: $scope.newEvent.address,
+			city: $scope.newEvent.city,
+			zip: $scope.newEvent.zip,
+			country: $scope.newEvent.country,
+			additionalInfo: $scope.newEvent.additionalInfo
+		});
+		$scope.newEvent = {guestList: []};
 	}
 	$scope.addGuest = function(){
-		$scope.guestList.push($scope.guest);
+		$scope.newEvent.guestList.push($scope.guest);
 		$scope.guest = "";
-		console.log($scope.guestList);
 	}
-
-	$scope.check = function(value){
-		console.log(value);
-	}
-
-	// if(navigator.geolocation){
-	// 	navigator.geolocation.getCurrentPosition(function(position){
-	// 		if(position.address){
-	// 			$scope.zip = position.address.postalCode;
-	// 			$scope.country = position.address.country;
-	// 		}
-	// 	});
-	// }
 
 };
 
@@ -77,6 +69,7 @@ function loginCtrl($scope, $firebaseAuth, $location, $cookies, $rootScope){
 	if($rootScope.loggedInUser){
 		$location.path("/");
 	}
+
 	auth = $firebaseAuth(ref);
 
 	$scope.remember = false;
@@ -101,7 +94,7 @@ function loginCtrl($scope, $firebaseAuth, $location, $cookies, $rootScope){
 	}
 };
 
-function signUpCtrl($scope, $http, $firebaseObject, $location, $rootScope){
+function signUpCtrl($scope, $http, $location, $rootScope){
 	if($rootScope.loggedInUser){
 		$location.path("/");
 	}
