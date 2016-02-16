@@ -35,7 +35,7 @@ var app = angular.module('app', ['ngRoute','ngCookies', 'firebase'])
 	});
 });
 
-function eventCtrl($scope, $rootScope, $firebaseArray){
+function eventCtrl($scope, $rootScope, $firebaseArray, $cookies, $location){
 	$scope.currentEvents = $firebaseArray(ref.child("events"));
 
 	$scope.newEvent = {
@@ -63,6 +63,24 @@ function eventCtrl($scope, $rootScope, $firebaseArray){
 		$scope.guest = "";
 	}
 
+	$scope.logout = function(){
+		$rootScope.loggedInUser = null;
+		$cookies.remove("user");
+		$location.path("/login");
+	}
+
+	if("geolocation" in navigator){
+		//Generate Location information for the event.
+		navigator.geolocation.getCurrentPosition(function(position){
+			console.log(position);
+		}, function(error){
+			console.log("ERROR:" + error.code + " - "+ error.message);
+		});
+	} else {
+		// Empty Models for the location information
+
+	}
+
 };
 
 function loginCtrl($scope, $firebaseAuth, $location, $cookies, $rootScope){
@@ -80,7 +98,6 @@ function loginCtrl($scope, $firebaseAuth, $location, $cookies, $rootScope){
 
 	$scope.login = function(formData){
 		$scope.authData = null;
-		$scope.errors = [];
 		auth.$authWithPassword(formData).then(function(authData){
 			if($scope.remember){
 				$cookies.put("user", authData.uid);
@@ -88,7 +105,7 @@ function loginCtrl($scope, $firebaseAuth, $location, $cookies, $rootScope){
 			$rootScope.loggedInUser = authData.uid;
 			$location.path("/");
 		}).catch(function(error){
-			console.log(error);
+			$scope.errors = [];
 			$scope.errors.push(error);
 		});
 	}

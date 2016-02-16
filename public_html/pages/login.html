@@ -4,13 +4,13 @@
 
 			<div class="form-container">
 				<h1>Login</h1>
-				<ul class="alert alert-danger list-group" ng-if="errors">
+				<ul class="alert alert-danger list-group" ng-show="errors">
 					<li ng-repeat="error in errors">{{ error.message }}</li>
 				</ul>
 				<form  ng-submit="login(formData)">
 					<div class="form-group">
 						<label class="control-label" for="email">Email</label>
-						<input type="email" id="email" name="email"  class="form-control" ng-model="formData.email" required>
+						<input type="email" id="email" name="email"  class="form-control" ng-model="formData.email" required autocomplete="email">
 					</div>
 					<div class="form-group">
 						<label class="control-label" for="password">Password</label>
