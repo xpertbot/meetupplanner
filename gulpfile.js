@@ -3,14 +3,15 @@ var gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	uglify = require('gulp-uglify'),
 	notify = require('gulp-notify'),
-	livereload = require('gulp-livereload'),
 	rename = require('gulp-rename'),
+	browserSync = require('browser-sync'),
+	modRewrite = require('connect-modrewrite'),
 	sass = require('gulp-sass');
 
 var PATH = 'public_html/';
 
 gulp.task('sass', function(){
-	return gulp.src('sass/main.scss')
+	return gulp.src('src/sass/main.scss')
 		.pipe(sass({
 			outputStyle:'compressed'
 		}))
@@ -21,19 +22,30 @@ gulp.task('sass', function(){
 		}))
 		.pipe(rename({suffix:'.min'}))
 		.pipe(gulp.dest(PATH+'css/'))
-		.pipe(livereload());
+		.pipe(browserSync.stream());
 });
 
-// gulp.task('js', function(){
-// 	return gulp.src('assets/js/main.js')
-// 		.pipe(concat('main.min.js'))
-// 		.pipe(uglify())
-// 		.pipe(gulp.dest(PATH+'js'))
-// 		.pipe(livereload());
-// });
-
-gulp.task('default', ['sass'], function(){
-	livereload.listen();
-	gulp.watch('sass/main.scss', ['sass']);
-	// gulp.watch('assets/js/*.js', ['js']);
+gulp.task('js', function(){
+	return gulp.src('src/js/main.js')
+		.pipe(uglify())
+		.on('error', notify.onError("Error: <%= error.message %>"))
+		.pipe(rename({suffix:'.min'}))
+		.pipe(gulp.dest(PATH+'js'))
+		.pipe(browserSync.stream());
 });
+gulp.task("serve",['sass', 'js'], function(){
+	browserSync.init({
+		server: {
+			baseDir: "./public_html",
+          	middleware: [
+        		modRewrite(['^([^.]+)$ /index.html [L]'])
+          	]
+		}
+	});
+
+	gulp.watch('src/sass/main.scss', ['sass']);
+	gulp.watch('src/js/main.js', ['js']);
+	gulp.watch(PATH+"**/*.html").on("change", browserSync.reload);
+});
+
+gulp.task('default', ['serve']);

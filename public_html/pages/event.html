@@ -6,19 +6,20 @@
 			<div class="current-events-container">
 				<div class="current-event" ng-repeat="curEvent in currentEvents track by $index">
 					<h3>{{ curEvent.name }} <small>{{ curEvent.type }}</small></h3>
+					<p>Event Host: {{ curEvent.host }}</p>
 					<div class="row">
 						<div class="col-sm-6">
 							<p><strong><i class="fa fa-calendar"></i> Event Start:</strong> {{ curEvent.startDate | date:"medium" }}</p>
 							<p><strong><i class="fa fa-calendar"></i> Event End:</strong> {{ curEvent.endDate | date:"medium" }}</p>
 							<p>
-								<strong>Address:</strong>
-								<address>
+								<strong ng-if="curEvent.address">Address:</strong>
+								<address ng-if="curEvent.address">
 									{{ curEvent.address }} <br>
 									{{ curEvent.city }}<br>
 									{{ curEvent.country }}, {{ curEvent.zip }}
 								</address>
 							</p>
-							<p><strong>Details:</strong><br>{{ curEvent.additionalInfo }}</p>
+							<p ng-if="curEvent.additionalInfo"><strong>Details:</strong><br>{{ curEvent.additionalInfo }}</p>
 						</div>
 						<div class="col-sm-6">
 							<p><strong>Guest List</strong></p>
@@ -36,33 +37,52 @@
 				<button class="btn btn-danger" ng-click="logout()">Logout</button>
 			</div>
 				<h1>Meet Up Planner</h1>
-				<form method="post" ng-submit="addEvent()" novalidate>
+				<form method="post" ng-submit="addEvent(eventForm.$valid)" name="eventForm">
 					<h3>Event Information</h3>
 					<div class="row">
-						<div class="col-sm-6">
-							<div class="form-group">
+						<div class="col-sm-12">
+							<div class="form-group" ng-class="{ 'has-error' : eventForm.name.$touched && eventForm.name.$invalid }">
 								<label class="control-label" for="eventName">Name of Event</label>
-								<input type="text" class="form-control" name="name" ng-model="newEvent.name" id="eventName">
+								<input type="text" class="form-control" name="name" ng-model="newEvent.name"
+									id="eventName" required autofocus>
+								<p ng-show="eventForm.name.$touched && eventForm.name.$error.required" class="help-block">Event name is required.</p>
 							</div>
 						</div>
+					</div>
+					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label class="control-label" for="eventType">Type of Event</label>
 								<input type="text" class="form-control" name="eventType" ng-model="newEvent.type" id="eventType">
 							</div>
 						</div>
+						<div class="col-sm-6">
+							<div class="form-group" ng-class="{ 'has-error' : eventForm.eventHost.$touched && eventForm.eventHost.$invalid }">
+								<label class="control-label" for="eventHost">Event Host</label>
+								<input type="text" class="form-control" name="eventHost" ng-model="newEvent.host"
+									id="eventHost" required>
+								<p ng-show="eventForm.eventHost.$touched && eventForm.eventHost.$error.required"
+									class="help-block">Event host is required.</p>
+							</div>
+						</div>
 					</div>
 					<div class="row">
 						<div class="col-xs-6">
-							<div class="form-group">
+							<div class="form-group" ng-class="{ 'has-error' : (eventForm.eventStart.$touched) && eventForm.eventStart.$invalid }">
 								<label class="control-label" for="eventStart">Event Start Date/Time</label>
-								<input type="datetime-local" class="form-control" name="eventStart" ng-model="newEvent.startDate" id="eventStart">
+								<input type="datetime-local" class="form-control" name="eventStart"
+									ng-model="newEvent.startDate" id="eventStart" required>
+								<p ng-show="eventForm.eventStart.$touched && eventForm.eventStart.$error.required"
+									class="help-block">Start Date is required.</p>
 							</div>
 						</div>
 						<div class="col-xs-6">
-							<div class="form-group">
+							<div class="form-group"  ng-class="{ 'has-error' : eventForm.eventEnd.$touched && eventForm.eventEnd.$invalid }">
 								<label class="control-label" for="eventEnd">Event End Date/Time</label>
-								<input type="datetime-local" class="form-control" name="eventEnd" ng-model="newEvent.endDate" id="eventEnd">
+								<input type="datetime-local" class="form-control" name="eventEnd"
+									ng-model="newEvent.endDate" id="eventEnd" required>
+								<p ng-show="eventForm.eventEnd.$touched && eventForm.eventEnd.$error.required"
+									class="help-block">End Date is required.</p>
 							</div>
 						</div>
 					</div>
@@ -121,7 +141,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<input type="submit" class="btn btn-success" value="Add Event" />
+						<input type="submit" class="btn btn-success" ng-disabled="eventForm.$invalid" value="Add Event" />
 					</div>
 				</form>
 		</div>

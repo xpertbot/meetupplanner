@@ -1,9 +1,9 @@
 {
   "devDependencies": {
+    "browser-sync": "^2.11.1",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-concat": "^2.6.0",
-    "gulp-livereload": "^3.8.1",
     "gulp-notify": "*",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.1.1",
@@ -13,11 +13,11 @@
   "version": "1.0.0",
   "main": "app.js",
   "dependencies": {
-    "express": "^4.13.4",
+    "browser-sync": "^2.11.1",
+    "connect-modrewrite": "^0.8.5",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-concat": "^2.6.0",
-    "gulp-livereload": "^3.8.1",
     "gulp-notify": "^2.2.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.1.1",
