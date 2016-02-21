@@ -1,0 +1,35 @@
+<div class="container-fluid login">
+	<div class="row">
+		<div class="col-sm-12">
+
+			<div class="form-container">
+				<h1>Login</h1>
+				<ul class="alert alert-danger list-group" ng-show="errors">
+					<li ng-repeat="error in errors">{{ error.message }}</li>
+				</ul>
+				<form  ng-submit="login(formData.$valid)" name="formData">
+					<div class="form-group" ng-class="{ 'has-error' : formData.email.$touched && formData.email.$invalid }">
+						<label class="control-label" for="email">Email</label>
+						<input type="email" id="email" name="email"  class="form-control" ng-model="loginData.email" required autocomplete="email" autofocus>
+						<p ng-show="formData.email.$touched && formData.email.$error.required" class="help-block">Email is required.</p>
+					</div>
+					<div class="form-group" ng-class="{ 'has-error' : formData.password.$touched && formData.password.$invalid }">
+						<label class="control-label" for="password">Password</label>
+						<input type="password" id="password" name="password"  class="form-control" ng-model="loginData.password" required>
+						<p ng-show="formData.password.$touched && formData.password.$error.required" class="help-block">Password is required.</p>
+					</div>
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" ng-model="remember"> Remember me
+						</label>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary btn-lg" ng-disabled="formData.$invalid">Login</button>
+						<a class="btn btn-success" href="/sign-up">Sign Up</a>
+					</div>
+				</form>
+			</div>
+
+		</div>
+	</div>
+</div>

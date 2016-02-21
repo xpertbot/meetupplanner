@@ -2,6 +2,7 @@ var gulp = require('gulp'),
 	autoprefixer = require('gulp-autoprefixer'),
 	concat = require('gulp-concat'),
 	uglify = require('gulp-uglify'),
+	htmlmin = require('gulp-htmlmin'),
 	notify = require('gulp-notify'),
 	rename = require('gulp-rename'),
 	browserSync = require('browser-sync'),
@@ -33,7 +34,15 @@ gulp.task('js', function(){
 		.pipe(gulp.dest(PATH+'js'))
 		.pipe(browserSync.stream());
 });
-gulp.task("serve",['sass', 'js'], function(){
+
+gulp.task('html', function(){
+	return gulp.src('src/html/**/*.html')
+		.pipe(htmlmin({collapseWhitespace: true}))
+		.on('error', notify.onError("Error: <%= error.message %>"))
+		.pipe(gulp.dest(PATH))
+});
+
+gulp.task("serve",['sass', 'js', 'html'], function(){
 	browserSync.init({
 		server: {
 			baseDir: "./public_html",
@@ -45,7 +54,7 @@ gulp.task("serve",['sass', 'js'], function(){
 
 	gulp.watch('src/sass/main.scss', ['sass']);
 	gulp.watch('src/js/main.js', ['js']);
-	gulp.watch(PATH+"**/*.html").on("change", browserSync.reload);
+	gulp.watch('src/**/*.html', ['html']).on("change", browserSync.reload);
 });
 
 gulp.task('default', ['serve']);

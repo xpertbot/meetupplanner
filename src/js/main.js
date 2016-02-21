@@ -101,23 +101,25 @@ function($scope, $firebaseAuth, $location, $cookies, $rootScope){
 	auth = $firebaseAuth(ref);
 
 	$scope.remember = false;
-	$scope.formData = {
+	$scope.loginData = {
 		email: "",
 		password: "",
 	}
 
-	$scope.login = function(formData){
-		$scope.authData = null;
-		auth.$authWithPassword(formData).then(function(authData){
-			if($scope.remember){
-				$cookies.put("user", authData.uid);
-			}
-			$rootScope.loggedInUser = authData.uid;
-			$location.path("/");
-		}).catch(function(error){
-			$scope.errors = [];
-			$scope.errors.push(error);
-		});
+	$scope.login = function(isValid){
+		if(isValid){
+			$scope.authData = null;
+			auth.$authWithPassword($scope.loginData).then(function(authData){
+				if($scope.remember){
+					$cookies.put("user", authData.uid);
+				}
+				$rootScope.loggedInUser = authData.uid;
+				$location.path("/");
+			}).catch(function(error){
+				$scope.errors = [];
+				$scope.errors.push(error);
+			});
+		}
 	}
 }
 ]);
@@ -128,37 +130,32 @@ function($scope, $http, $location, $rootScope){
 	if($rootScope.loggedInUser){
 		$location.path("/");
 	}
-	$scope.formData = {};
+	$scope.signUpData = {};
+	$scope.userData = {
+		name: "",
+		bio: "",
+	};
 
-	$scope.processForm = function(){
-		$scope.errors = [];
-		ref.createUser({
-			email: $scope.formData.email,
-			password: $scope.formData.password,
-		}, function(error, userData){
-			if(error){
-				console.log(error);
-				$scope.errors.push(error);
-			} else {
-				var userRef = ref.child("users");
-				userRef.child(userData.uid).set({
-					name: $scope.formData.name,
-					bio: $scope.formData.bio,
-				}, function(){
-					ref.authWithPassword({
-						"email": $scope.formData.email,
-						"password": $scope.formData.password,
-					}, function(error, authData){
-						if(error){
-							console.log(error);
-							$scope.errors.push(error);
-						} else {
-							$location.path("/");
-						}
+	$scope.processForm = function(isValid){
+		if(isValid){
+			ref.createUser({
+				email: $scope.signUpData.email,
+				password: $scope.signUpData.password,
+			}, function(error, userData){
+				if(error){
+					$scope.errors = [];
+					$scope.errors.push(error);
+				} else {
+					var userRef = ref.child("users");
+					userRef.child(userData.uid).set($scope.userData, function(){
+						$rootScope.$apply(function(){
+							$location.path('/login');
+							console.log($location.path());
+						});
 					});
-				});
-			}
-		});
+				}
+			});
+		}
 	}
 }
 ]);
