@@ -96,10 +96,12 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-6">
-							<div class="form-group" ng-class="{ 'has-error' : eventForm.guest.$touched && newEvent.guestList.length == 0 }">
+							<div class="form-group" ng-class="{ 'has-error' : eventForm.guestList.$touched && eventForm.guestList.$invalid }">
 								<label class="control-label" for="guest">Guests</label>
-								<input type="text" ng-model="guest" id="guest" class="form-control" name="guest">
-								<p ng-show="eventForm.guest.$touched && newEvent.guestList.length == 0" class="help-block">Guests are required.</p>
+								<input type="text" ng-model="newEvent.guestList" id="guest" class="form-control" name="guestList"
+									ng-list placeholder="John, Marie, Joseph" required>
+								<span class="help-block">Enter Guests separated by commas</span>
+								<p ng-show="eventForm.guestList.$touched && newEvent.guestList.$error.required" class="help-block">Guests are required.</p>
 							</div>
 							<div class="form-group">
 								<button class="btn btn-primary" id="addGuest" ng-click="addGuest()" type="button">Add Guest</button>
